@@ -7,5 +7,4 @@ jobs:
     steps:
       - run: |
           sudo apt-get install -y cpanminus
-          file /usr/bin/cpanm
-          /usr/bin/cpanm --verbose --notest Capture::Tiny Devel::Cover Devel::Cover::Report::Html Hash::Merge Module::Build::Tiny Text::Hunspell
+          echo Capture::Tiny Devel::Cover Devel::Cover::Report::Html Hash::Merge Module::Build::Tiny Text::Hunspell | xargs perl /usr/bin/cpanm --verbose --notest 
