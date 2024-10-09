@@ -7,4 +7,13 @@ jobs:
     steps:
       - run: |
           sudo apt-get install -y cpanminus
-          echo Capture::Tiny Devel::Cover Devel::Cover::Report::Html Hash::Merge Module::Build::Tiny Text::Hunspell | xargs perl /usr/bin/cpanm --verbose --notest 
+          x='Capture::Tiny Devel::Cover Devel::Cover::Report::Html Hash::Merge Module::Build::Tiny Text::Hunspell'
+          echo $x | xargs perl /usr/bin/cpanm --verbose --notest
+          for module in $x; do
+            if perl -e "use $module; 1;" >&2; then
+              echo ''
+            else
+              echo $? >&2
+              echo $module
+            fi
+          done
