@@ -8,5 +8,5 @@ jobs:
       - run: |
           sudo apt-get install -y cpanminus
           file /usr/bin/cpanm
-          : ' Hash::Merge Module::Build::Tiny Text::Hunspell'
-          /usr/bin/cpanm --verbose --notest Capture::Tiny Devel::Cover Devel::Cover::Report::Html
+          : '  Module::Build::Tiny Text::Hunspell'
+          /usr/bin/cpanm --verbose --notest Capture::Tiny Devel::Cover Devel::Cover::Report::Html Hash::Merge
