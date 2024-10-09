@@ -13,17 +13,33 @@ jobs:
           export PERL_MM_OPT='INSTALL_BASE='~/perl5
           (
           echo '```sh'
-          sudo apt-get install -y cpanminus
-          x='Capture::Tiny Devel::Cover Devel::Cover::Report::Html Hash::Merge Module::Build::Tiny Text::Hunspell'
-          echo $x | xargs perl /usr/bin/cpanm --verbose --notest
-          cat ~/.bashrc || echo no bashrc
-          for module in $x; do
-            if perl -e "use $module; 1;" >&2; then
-              echo ''
-            else
-              echo $? >&2
-              echo $module
-            fi
-          done
+          modules='Capture::Tiny Devel::Cover Devel::Cover::Report::Html Hash::Merge Module::Build::Tiny Text::Hunspell'
+          debian_packages=$(
+            for module in $modules; do
+              debian_package=$(echo $module |perl -pe 's/::/-/;tr/A-Z/a-z/; s/^/lib/;s/$/-perl/;')
+              if apt-cache policy $debian_package|grep -q Candidate:; then
+                echo $debian_package
+              fi
+            done
+          )
+          if [ -n "$debian_packages" ]; then
+            sudo apt-get install -y $debian_packages
+          fi
+          get_needed_modules() {
+            for module in $modules; do
+              if perl -e "use $module; 1;" >&2; then
+                echo ''
+              else
+                echo $? >&2
+                echo $module
+              fi
+            done
+          }
+          x=$(get_needed_modules)
+          if [ -n "$x" ]; then
+            sudo apt-get install -y cpanminus
+            echo $x | xargs perl /usr/bin/cpanm --verbose --notest
+            get_needed_modules
+          fi
           echo '```'
           ) | tee -a "$GITHUB_STEP_SUMMARY"
