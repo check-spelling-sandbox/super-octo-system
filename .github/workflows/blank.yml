@@ -5,10 +5,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - run: |
+      - run: |          
+          (
+          echo '```sh'
           sudo apt-get install -y cpanminus
           x='Capture::Tiny Devel::Cover Devel::Cover::Report::Html Hash::Merge Module::Build::Tiny Text::Hunspell'
           echo $x | xargs perl /usr/bin/cpanm --verbose --notest
+          cat ~/.bashrc || echo no bashrc
           for module in $x; do
             if perl -e "use $module; 1;" >&2; then
               echo ''
@@ -17,3 +20,5 @@ jobs:
               echo $module
             fi
           done
+          echo '```'
+          ) | tee -a "$GITHUB_STEP_SUMMARY"
